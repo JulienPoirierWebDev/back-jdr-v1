@@ -13,7 +13,9 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\User
+            # La propriété unique testé pour la connexion est l'email
                 property: email
+        # le provider de JWT est connecté a la classe User déja créer
         jwt:
             lexik_jwt:
                 class: App\Entity\User
@@ -24,28 +26,26 @@ security:
         api_token_refresh:
             pattern: ^/api/token/refresh
             stateless: true
-            refresh_jwt: ~
             provider: app_user_provider
         login:
+            #Le login classique utilise le app_user_provider de symfony.
             pattern: ^/api/login$
             stateless: true
             provider: app_user_provider
+            # json_login permet l'authentification par requête POST
             json_login:
+                # un token est généré en cas de réussite et transmis.
                 check_path: /api/login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
         api:
+            # Pour API Platform et l'ensemble des requêtes, c'est le JWT qui est le provider
+            # C'est stateless, cela veut dire que rien n'est stocké, que toutes les demandes sont indépendantes.
             pattern: ^/api
             provider: jwt
             jwt: ~
             stateless: true
 
-       # main:
-       #     lazy: true
-       #     provider: app_user_provider
-       #     json_login:
-       #         check_path: api_login
-       #         success_handler:
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -56,5 +56,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/api/users, roles: PUBLIC_ACCESS }
+        - { path: ^/api/hash, roles: PUBLIC_ACCESS }
+        - { path: ^/api/check, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api, roles: ROLE_USER }
+        - { path: ^/api/adventures/check, roles: ROLE_USER }

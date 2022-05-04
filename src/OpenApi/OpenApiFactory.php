@@ -58,8 +58,17 @@ class OpenApiFactory implements OpenApiFactoryInterface
         $mePathItem = $openApi->getPaths()->getPath('/api/me')->withGet($meOperation);
         $openApi->getPaths()->addPath('/api/me', $mePathItem);
 
+        $checkOperation = $openApi->getPaths()->getPath("/api/check")->getPost()->withParameters(["email"]);
+        $checkPathItem = $openApi->getPaths()->getPath('/api/check')->withPost($checkOperation);
+        $openApi->getPaths()->addPath('/api/check', $checkPathItem);
 
+        $adventuresCheckOperation = $openApi->getPaths()->getPath("/api/adventures/check")->getPost()->withParameters(["slug"]);
+        $adventureCheckPathItem = $openApi->getPaths()->getPath('/api/adventures/check')->withPost($adventuresCheckOperation);
+        $openApi->getPaths()->addPath('/api/adventures/check', $adventureCheckPathItem);
 
+        $adventuresCountOperation = $openApi->getPaths()->getPath("/api/adventures/count")->getPost()->withParameters(["user_id"]);
+        $adventureCountPathItem = $openApi->getPaths()->getPath('/api/adventures/count')->withPost($adventuresCountOperation);
+        $openApi->getPaths()->addPath('/api/adventures/count', $adventureCountPathItem);
 
         return $openApi;
     }
